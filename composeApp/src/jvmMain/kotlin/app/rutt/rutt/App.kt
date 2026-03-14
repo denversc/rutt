@@ -36,9 +36,11 @@ import java.io.File
 @Preview
 fun App() {
     MaterialTheme {
-        val currentDir = File(System.getProperty("user.dir"))
-        val files = remember { currentDir.listFiles()?.toList()?.sortedWith(compareBy({ !it.isDirectory }, { it.name })) ?: emptyList() }
-        var selectedIndex by remember { mutableStateOf(0) }
+        var currentDir by remember { mutableStateOf(File(System.getProperty("user.dir"))) }
+        val files = remember(currentDir) { 
+            currentDir.listFiles()?.toList()?.sortedWith(compareBy({ !it.isDirectory }, { it.name })) ?: emptyList() 
+        }
+        var selectedIndex by remember(currentDir) { mutableStateOf(0) }
         val listState = rememberLazyListState()
         val focusRequester = remember { FocusRequester() }
 
@@ -47,7 +49,9 @@ fun App() {
         }
 
         LaunchedEffect(selectedIndex) {
-            listState.animateScrollToItem(selectedIndex)
+            if (files.isNotEmpty()) {
+                listState.animateScrollToItem(selectedIndex)
+            }
         }
 
         Column(
@@ -71,6 +75,18 @@ fun App() {
                                 }
                                 true
                             }
+                            Key.H -> {
+                                currentDir.parentFile?.let {
+                                    currentDir = it
+                                }
+                                true
+                            }
+                            Key.L -> {
+                                if (files.isNotEmpty() && files[selectedIndex].isDirectory) {
+                                    currentDir = files[selectedIndex]
+                                }
+                                true
+                            }
                             else -> false
                         }
                     } else {
@@ -78,6 +94,12 @@ fun App() {
                     }
                 }
         ) {
+            Text(
+                text = currentDir.absolutePath,
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize()

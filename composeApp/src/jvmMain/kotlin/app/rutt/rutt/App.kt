@@ -58,51 +58,68 @@ fun App() {
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .focusRequester(focusRequester)
-                .focusable()
-                .onPreviewKeyEvent { event ->
-                    if (event.type == KeyEventType.KeyDown) {
-                        when (event.key) {
-                            Key.J -> {
-                                if (selectedIndex < files.size - 1) {
-                                    selectedIndex++
-                                }
-                                true
-                            }
-                            Key.K -> {
-                                if (selectedIndex > 0) {
-                                    selectedIndex--
-                                }
-                                true
-                            }
-                            Key.H -> {
-                                currentDir.parentFile?.let {
-                                    currentDir = it
-                                }
-                                true
-                            }
-                            Key.L -> {
-                                if (files.isNotEmpty() && files[selectedIndex].isDirectory) {
-                                    currentDir = files[selectedIndex]
-                                }
-                                true
-                            }
-                            else -> false
-                        }
-                    } else {
-                        false
-                    }
-                }
         ) {
-            Text(
-                text = currentDir.absolutePath,
-                modifier = Modifier.padding(8.dp),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary
+            var pathInput by remember(currentDir) { mutableStateOf(currentDir.absolutePath) }
+            androidx.compose.material3.TextField(
+                value = pathInput,
+                onValueChange = { pathInput = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .onPreviewKeyEvent { event ->
+                        if (event.type == KeyEventType.KeyDown && event.key == Key.Enter) {
+                            val newDir = File(pathInput)
+                            if (newDir.exists() && newDir.isDirectory) {
+                                currentDir = newDir
+                                focusRequester.requestFocus()
+                            }
+                            true
+                        } else {
+                            false
+                        }
+                    },
+                singleLine = true,
+                textStyle = MaterialTheme.typography.labelSmall
             )
             LazyColumn(
                 state = listState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .focusRequester(focusRequester)
+                    .focusable()
+                    .onPreviewKeyEvent { event ->
+                        if (event.type == KeyEventType.KeyDown) {
+                            when (event.key) {
+                                Key.J -> {
+                                    if (selectedIndex < files.size - 1) {
+                                        selectedIndex++
+                                    }
+                                    true
+                                }
+                                Key.K -> {
+                                    if (selectedIndex > 0) {
+                                        selectedIndex--
+                                    }
+                                    true
+                                }
+                                Key.H -> {
+                                    currentDir.parentFile?.let {
+                                        currentDir = it
+                                    }
+                                    true
+                                }
+                                Key.L -> {
+                                    if (files.isNotEmpty() && files[selectedIndex].isDirectory) {
+                                        currentDir = files[selectedIndex]
+                                    }
+                                    true
+                                }
+                                else -> false
+                            }
+                        } else {
+                            false
+                        }
+                    }
             ) {
                 itemsIndexed(files) { index, file ->
                     val isSelected = index == selectedIndex

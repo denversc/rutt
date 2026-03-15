@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import java.io.File
 import java.text.NumberFormat
 
+@Suppress("LongMethod", "CyclomaticComplexMethod", "ModifierMissing")
 @Composable
-@Preview
 fun App() {
   MaterialTheme {
     var currentDir by remember { mutableStateOf(File(System.getProperty("user.dir"))) }
@@ -51,7 +52,7 @@ fun App() {
                   ?.sortedWith(compareBy({ !it.isDirectory }, { it.name })) ?: emptyList()
           )
         }
-    var selectedIndex by remember(currentDir) { mutableStateOf(0) }
+    var selectedIndex by remember(currentDir) { mutableIntStateOf(0) }
     var editingIndex by remember(currentDir) { mutableStateOf<Int?>(null) }
     var editingText by remember { mutableStateOf(TextFieldValue("")) }
     val listState = rememberLazyListState()

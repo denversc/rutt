@@ -8,9 +8,7 @@ plugins {
   alias(libs.plugins.detekt)
 }
 
-dependencies {
-  detektPlugins(libs.detekt.compose)
-}
+dependencies { detektPlugins(libs.detekt.compose) }
 
 detekt {
   buildUponDefaultConfig = true

@@ -40,7 +40,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "app.rutt.rutt"
+            packageName = "Rutt"
             packageVersion = "1.0.0"
         }
     }

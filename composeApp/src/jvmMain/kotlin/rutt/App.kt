@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import java.io.File
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.TextRange
+import java.text.NumberFormat
 
 @Composable
 @Preview
@@ -128,7 +129,8 @@ fun App() {
             LazyColumn(
                 state = listState,
                 modifier = Modifier
-                    .fillMaxSize()
+                    .weight(1f)
+                    .fillMaxWidth()
                     .focusRequester(focusRequester)
                     .focusable()
                     .onPreviewKeyEvent { event ->
@@ -332,6 +334,28 @@ fun App() {
                         }
                     }
                 }
+            }
+
+            val fileCount = files.count { !it.isDirectory }
+            val dirCount = files.count { it.isDirectory }
+            val format = NumberFormat.getInstance()
+
+            androidx.compose.material3.HorizontalDivider(
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${format.format(fileCount)} Files, ${format.format(dirCount)} Directories",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

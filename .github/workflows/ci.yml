@@ -4,7 +4,7 @@ on:
   pull_request:
   workflow_dispatch:
   schedule:
-    - cron: '0 11 * * *' # Run nightly at 11am UTC (3am Pacific, 6am Eastern)
+    - cron: "0 11 * * *" # Run nightly at 11am UTC (3am Pacific, 6am Eastern)
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -20,8 +20,8 @@ jobs:
           show-progress: false
       - uses: actions/setup-java@v4
         with:
-          java-version: '22'
-          distribution: 'temurin'
+          java-version: 22
+          distribution: temurin
       - uses: gradle/actions/setup-gradle@v3
       - run: ./gradlew detekt
 
@@ -34,8 +34,11 @@ jobs:
           show-progress: false
       - uses: actions/setup-java@v4
         with:
-          java-version: '22'
-          distribution: 'temurin'
+          java-version: 22
+          distribution: temurin
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - uses: gradle/actions/setup-gradle@v3
       - run: ./gradlew spotlessCheck
 
@@ -48,8 +51,8 @@ jobs:
           show-progress: false
       - uses: actions/setup-java@v4
         with:
-          java-version: '22'
-          distribution: 'temurin'
+          java-version: 22
+          distribution: temurin
       - uses: gradle/actions/setup-gradle@v3
       - run: ./gradlew assemble
 
@@ -62,8 +65,8 @@ jobs:
           show-progress: false
       - uses: actions/setup-java@v4
         with:
-          java-version: '22'
-          distribution: 'temurin'
+          java-version: 22
+          distribution: temurin
       - uses: gradle/actions/setup-gradle@v3
       - run: ./gradlew jvmTest
 
@@ -74,7 +77,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           show-progress: false
-          sparse-checkout: '.github/'
+          sparse-checkout: ".github/"
       - uses: docker://index.docker.io/rhysd/actionlint@sha256:887a259a5a534f3c4f36cb02dca341673c6089431057242cdc931e9f133147e9 # ratchet:docker://rhysd/actionlint:1.7.7
         with:
           args: -color /github/workspace/.github/workflows/ci.yml

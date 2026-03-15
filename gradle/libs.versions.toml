@@ -19,6 +19,8 @@ compose-material3 = { module = "org.jetbrains.compose.material3:material3", vers
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
+flexmark = { module = "com.vladsch.flexmark:flexmark", version = "0.64.8" }
+ktfmt = { module = "com.facebook:ktfmt", version = "0.61" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 
 [plugins]
@@ -26,3 +28,4 @@ composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "com
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+spotless = { id = "com.diffplug.spotless", version = "7.0.2" }

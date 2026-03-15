@@ -60,11 +60,12 @@ fun App() {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             var pathInput by remember(currentDir) { mutableStateOf(currentDir.absolutePath) }
-            androidx.compose.material3.TextField(
+            androidx.compose.foundation.text.BasicTextField(
                 value = pathInput,
                 onValueChange = { pathInput = it },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(8.dp)
                     .onPreviewKeyEvent { event ->
                         if (event.type == KeyEventType.KeyDown && event.key == Key.Enter) {
@@ -79,7 +80,12 @@ fun App() {
                         }
                     },
                 singleLine = true,
-                textStyle = MaterialTheme.typography.labelSmall
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                cursorBrush = androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.primary)
+            )
+            androidx.compose.material3.HorizontalDivider(
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.outline
             )
             LazyColumn(
                 state = listState,
@@ -130,7 +136,7 @@ fun App() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(backgroundColor)
-                            .padding(8.dp),
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(

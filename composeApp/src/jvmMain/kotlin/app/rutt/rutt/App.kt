@@ -159,9 +159,12 @@ fun App() {
                                 }
                                 Key.H -> {
                                     if (event.isShiftPressed) {
-                                        val visibleItems = listState.layoutInfo.visibleItemsInfo
-                                        if (visibleItems.isNotEmpty()) {
-                                            selectedIndex = visibleItems.first().index
+                                        val layoutInfo = listState.layoutInfo
+                                        val fullyVisibleItems = layoutInfo.visibleItemsInfo.filter {
+                                            it.offset >= layoutInfo.viewportStartOffset && (it.offset + it.size) <= layoutInfo.viewportEndOffset
+                                        }
+                                        if (fullyVisibleItems.isNotEmpty()) {
+                                            selectedIndex = fullyVisibleItems.first().index
                                         }
                                     } else {
                                         currentDir.parentFile?.let {
@@ -172,9 +175,12 @@ fun App() {
                                 }
                                 Key.M -> {
                                     if (event.isShiftPressed) {
-                                        val visibleItems = listState.layoutInfo.visibleItemsInfo
-                                        if (visibleItems.isNotEmpty()) {
-                                            selectedIndex = visibleItems[visibleItems.size / 2].index
+                                        val layoutInfo = listState.layoutInfo
+                                        val fullyVisibleItems = layoutInfo.visibleItemsInfo.filter {
+                                            it.offset >= layoutInfo.viewportStartOffset && (it.offset + it.size) <= layoutInfo.viewportEndOffset
+                                        }
+                                        if (fullyVisibleItems.isNotEmpty()) {
+                                            selectedIndex = fullyVisibleItems[fullyVisibleItems.size / 2].index
                                         }
                                         true
                                     } else {
@@ -195,9 +201,12 @@ fun App() {
                                 }
                                 Key.L -> {
                                     if (event.isShiftPressed) {
-                                        val visibleItems = listState.layoutInfo.visibleItemsInfo
-                                        if (visibleItems.isNotEmpty()) {
-                                            selectedIndex = visibleItems.last().index
+                                        val layoutInfo = listState.layoutInfo
+                                        val fullyVisibleItems = layoutInfo.visibleItemsInfo.filter {
+                                            it.offset >= layoutInfo.viewportStartOffset && (it.offset + it.size) <= layoutInfo.viewportEndOffset
+                                        }
+                                        if (fullyVisibleItems.isNotEmpty()) {
+                                            selectedIndex = fullyVisibleItems.last().index
                                         }
                                     } else {
                                         if (files.isNotEmpty() && files[selectedIndex].isDirectory) {

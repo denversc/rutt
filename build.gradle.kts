@@ -31,6 +31,13 @@ spotless {
     trimTrailingWhitespace()
     endWithNewline()
   }
+  yaml {
+    target("**/*.yml", "**/*.yaml")
+    targetExclude("**/build/**", "**/.idea/**")
+    prettier().config(mapOf("printWidth" to 100))
+    trimTrailingWhitespace()
+    endWithNewline()
+  }
   flexmark {
     flexmark(libs.flexmark.get().version)
     target("**/*.md")

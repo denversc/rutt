@@ -31,21 +31,35 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.io.File
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.TextRange
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
         var currentDir by remember { mutableStateOf(File(System.getProperty("user.dir"))) }
-        val files = remember(currentDir) { 
-            currentDir.listFiles()?.toList()?.sortedWith(compareBy({ !it.isDirectory }, { it.name })) ?: emptyList() 
+        var refreshKey by remember { mutableStateOf(0) }
+        val files = remember(currentDir, refreshKey) {
+            currentDir.listFiles()?.toList()?.sortedWith(compareBy({ !it.isDirectory }, { it.name })) ?: emptyList()
         }
-        var selectedIndex by remember(currentDir) { mutableStateOf(0) }
+        var selectedIndex by remember(currentDir, refreshKey) { mutableStateOf(0) }
+        var editingIndex by remember(currentDir, refreshKey) { mutableStateOf<Int?>(null) }
+        var editingText by remember { mutableStateOf(TextFieldValue("")) }
         val listState = rememberLazyListState()
         val focusRequester = remember { FocusRequester() }
+        val editFocusRequester = remember { FocusRequester() }
 
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
+        }
+
+        LaunchedEffect(editingIndex) {
+            if (editingIndex != null) {
+                editFocusRequester.requestFocus()
+            } else {
+                focusRequester.requestFocus()
+            }
         }
 
         LaunchedEffect(selectedIndex) {
@@ -120,6 +134,22 @@ fun App() {
                                     }
                                     true
                                 }
+                                Key.I -> {
+                                    if (files.isNotEmpty()) {
+                                        editingIndex = selectedIndex
+                                        val name = files[selectedIndex].name
+                                        editingText = TextFieldValue(name, TextRange(0))
+                                    }
+                                    true
+                                }
+                                Key.A -> {
+                                    if (files.isNotEmpty()) {
+                                        editingIndex = selectedIndex
+                                        val name = files[selectedIndex].name
+                                        editingText = TextFieldValue(name, TextRange(name.length))
+                                    }
+                                    true
+                                }
                                 else -> false
                             }
                         } else {
@@ -129,6 +159,7 @@ fun App() {
             ) {
                 itemsIndexed(files) { index, file ->
                     val isSelected = index == selectedIndex
+                    val isEditing = index == editingIndex
                     val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
                     val textColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
 
@@ -139,10 +170,47 @@ fun App() {
                             .padding(horizontal = 8.dp, vertical = 2.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = if (file.isDirectory) "📁 ${file.name}/" else "📄 ${file.name}",
-                            color = textColor
-                        )
+                        if (isEditing) {
+                            Text(text = if (file.isDirectory) "📁 " else "📄 ", color = textColor)
+                            androidx.compose.foundation.text.BasicTextField(
+                                value = editingText,
+                                onValueChange = { editingText = it },
+                                textStyle = MaterialTheme.typography.bodyLarge.copy(color = textColor),
+                                cursorBrush = androidx.compose.ui.graphics.SolidColor(textColor),
+                                singleLine = true,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .focusRequester(editFocusRequester)
+                                    .onPreviewKeyEvent { e ->
+                                        if (e.type == KeyEventType.KeyDown) {
+                                            if (e.key == Key.Enter) {
+                                                val newName = editingText.text
+                                                if (newName.isNotBlank() && newName != file.name) {
+                                                    val newFile = File(currentDir, newName)
+                                                    if (!newFile.exists()) {
+                                                        file.renameTo(newFile)
+                                                        refreshKey++
+                                                    }
+                                                }
+                                                editingIndex = null
+                                                true
+                                            } else if (e.key == Key.Escape) {
+                                                editingIndex = null
+                                                true
+                                            } else {
+                                                false
+                                            }
+                                        } else {
+                                            false
+                                        }
+                                    }
+                            )
+                        } else {
+                            Text(
+                                text = if (file.isDirectory) "📁 ${file.name}/" else "📄 ${file.name}",
+                                color = textColor
+                            )
+                        }
                     }
                 }
             }

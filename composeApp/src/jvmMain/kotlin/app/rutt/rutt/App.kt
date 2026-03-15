@@ -65,7 +65,7 @@ fun App() {
 
         LaunchedEffect(selectedIndex) {
             if (files.isNotEmpty()) {
-                listState.animateScrollToItem(selectedIndex)
+                listState.scrollToItem(selectedIndex)
             }
         }
 
@@ -112,14 +112,24 @@ fun App() {
                         if (event.type == KeyEventType.KeyDown) {
                             when (event.key) {
                                 Key.J -> {
-                                    if (selectedIndex < files.size - 1) {
-                                        selectedIndex++
+                                    if (event.isShiftPressed) {
+                                        val step = maxOf(1, listState.layoutInfo.visibleItemsInfo.size - 1)
+                                        selectedIndex = minOf(files.size - 1, selectedIndex + step)
+                                    } else {
+                                        if (selectedIndex < files.size - 1) {
+                                            selectedIndex++
+                                        }
                                     }
                                     true
                                 }
                                 Key.K -> {
-                                    if (selectedIndex > 0) {
-                                        selectedIndex--
+                                    if (event.isShiftPressed) {
+                                        val step = maxOf(1, listState.layoutInfo.visibleItemsInfo.size - 1)
+                                        selectedIndex = maxOf(0, selectedIndex - step)
+                                    } else {
+                                        if (selectedIndex > 0) {
+                                            selectedIndex--
+                                        }
                                     }
                                     true
                                 }

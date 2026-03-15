@@ -29,6 +29,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.io.File
@@ -153,6 +154,24 @@ fun App() {
                                 Key.R -> {
                                     if (event.isShiftPressed) {
                                         files = currentDir.listFiles()?.toList()?.sortedWith(compareBy({ !it.isDirectory }, { it.name })) ?: emptyList()
+                                        true
+                                    } else {
+                                        false
+                                    }
+                                }
+                                Key.F -> {
+                                    if (event.isCtrlPressed) {
+                                        val step = maxOf(1, listState.layoutInfo.visibleItemsInfo.size - 1)
+                                        selectedIndex = minOf(files.size - 1, selectedIndex + step)
+                                        true
+                                    } else {
+                                        false
+                                    }
+                                }
+                                Key.B -> {
+                                    if (event.isCtrlPressed) {
+                                        val step = maxOf(1, listState.layoutInfo.visibleItemsInfo.size - 1)
+                                        selectedIndex = maxOf(0, selectedIndex - step)
                                         true
                                     } else {
                                         false

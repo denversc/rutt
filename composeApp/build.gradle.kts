@@ -34,7 +34,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "app.rutt.rutt.MainKt"
+        mainClass = "rutt.MainKt"
         // Suppress warnings from org.jetbrains.skiko.Library calling java.lang.System::load
         jvmArgs += listOf("--enable-native-access=ALL-UNNAMED")
 

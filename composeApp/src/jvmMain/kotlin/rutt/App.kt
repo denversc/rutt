@@ -1,4 +1,4 @@
-package app.rutt.rutt
+package rutt
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable

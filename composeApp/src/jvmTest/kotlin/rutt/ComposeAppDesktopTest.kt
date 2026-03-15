@@ -1,4 +1,4 @@
-package app.rutt.rutt
+package rutt
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

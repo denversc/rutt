@@ -23,7 +23,7 @@ Rutt is a Kotlin Multiplatform Compose desktop application intended to be a GUI 
 ## Technical Details
 - **UI Framework**: Compose Multiplatform (Desktop/JVM target).
 - **Core Files**:
-  - `composeApp/src/jvmMain/kotlin/app/rutt/rutt/App.kt`: Contains the main UI logic, state management, and key event handling.
+  - `composeApp/src/jvmMain/kotlin/App.kt`: Contains the main UI logic, state management, and key event handling.
 - **Build System**: Gradle.
   - `composeApp/build.gradle.kts`: Configuration for the compose app.
   - `gradle.properties`: Global gradle configuration.

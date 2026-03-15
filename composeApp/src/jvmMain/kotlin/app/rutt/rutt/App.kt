@@ -109,6 +109,7 @@ fun App() {
                     .focusRequester(focusRequester)
                     .focusable()
                     .onPreviewKeyEvent { event ->
+                        if (editingIndex != null) return@onPreviewKeyEvent false
                         if (event.type == KeyEventType.KeyDown) {
                             when (event.key) {
                                 Key.J -> {
@@ -160,6 +161,15 @@ fun App() {
                                         editingText = TextFieldValue(name, TextRange(name.length))
                                     }
                                     true
+                                }
+                                Key.D -> {
+                                    if (event.isShiftPressed && files.isNotEmpty()) {
+                                        editingIndex = selectedIndex
+                                        editingText = TextFieldValue("", TextRange(0))
+                                        true
+                                    } else {
+                                        false
+                                    }
                                 }
                                 Key.R -> {
                                     if (event.isShiftPressed) {

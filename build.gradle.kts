@@ -9,19 +9,32 @@ plugins {
 }
 
 spotless {
+  format("misc") {
+    target("**/.gitignore", "**/*.properties", "**/*.toml", "**/*.xml")
+    targetExclude("**/build/**", "**/.idea/**")
+    trimTrailingWhitespace()
+    leadingTabsToSpaces(2)
+    endWithNewline()
+  }
   kotlin {
     target("**/*.kt")
     targetExclude("**/build/**", "**/.idea/**")
     ktfmt(libs.ktfmt.get().version)
+    trimTrailingWhitespace()
+    endWithNewline()
   }
   kotlinGradle {
     target("**/*.gradle.kts")
     targetExclude("**/build/**", "**/.idea/**")
     ktfmt(libs.ktfmt.get().version)
+    trimTrailingWhitespace()
+    endWithNewline()
   }
   flexmark {
     flexmark(libs.flexmark.get().version)
     target("**/*.md")
     targetExclude("**/build/**", "**/.idea/**")
+    trimTrailingWhitespace()
+    endWithNewline()
   }
 }

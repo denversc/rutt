@@ -42,4 +42,3 @@ Rutt is a Kotlin Multiplatform Compose desktop application intended to be a GUI 
 - Maintain the vim-like keyboard navigation paradigm for all new features where applicable.
 - Ensure that the UI remains keyboard-friendly and focus is managed correctly (e.g., returning focus to the file list after path entry).
 - **Key Interception**: When adding new navigation keys, always check if an edit operation is in progress (`editingIndex != null`) to avoid intercepting text input meant for renaming.
-

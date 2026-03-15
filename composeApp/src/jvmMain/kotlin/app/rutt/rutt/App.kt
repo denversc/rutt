@@ -65,7 +65,30 @@ fun App() {
 
         LaunchedEffect(selectedIndex) {
             if (files.isNotEmpty()) {
-                listState.scrollToItem(selectedIndex)
+                val layoutInfo = listState.layoutInfo
+                val visibleItems = layoutInfo.visibleItemsInfo
+                if (visibleItems.isNotEmpty()) {
+                    val fullyVisibleItems = visibleItems.filter {
+                        it.offset >= layoutInfo.viewportStartOffset && (it.offset + it.size) <= layoutInfo.viewportEndOffset
+                    }
+                    if (fullyVisibleItems.isEmpty()) {
+                        listState.scrollToItem(selectedIndex)
+                    } else {
+                        val firstFullyVisible = fullyVisibleItems.first().index
+                        val lastFullyVisible = fullyVisibleItems.last().index
+
+                        if (selectedIndex < firstFullyVisible) {
+                            listState.scrollToItem(selectedIndex)
+                        } else if (selectedIndex > lastFullyVisible) {
+                            val itemHeight = visibleItems.first().size
+                            val viewportHeight = layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset
+                            val itemsThatFit = if (itemHeight > 0) maxOf(1, viewportHeight / itemHeight) else 1
+                            listState.scrollToItem(maxOf(0, selectedIndex - itemsThatFit + 1))
+                        }
+                    }
+                } else {
+                    listState.scrollToItem(selectedIndex)
+                }
             }
         }
 

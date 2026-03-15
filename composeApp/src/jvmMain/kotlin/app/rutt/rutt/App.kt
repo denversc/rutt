@@ -140,6 +140,18 @@ fun App() {
                                     }
                                     true
                                 }
+                                Key.G -> {
+                                    if (files.isNotEmpty()) {
+                                        if (event.isShiftPressed) {
+                                            selectedIndex = files.size - 1
+                                        } else {
+                                            selectedIndex = 0
+                                        }
+                                        true
+                                    } else {
+                                        false
+                                    }
+                                }
                                 Key.L -> {
                                     if (files.isNotEmpty() && files[selectedIndex].isDirectory) {
                                         currentDir = files[selectedIndex]

@@ -39,12 +39,11 @@ import androidx.compose.ui.text.TextRange
 fun App() {
     MaterialTheme {
         var currentDir by remember { mutableStateOf(File(System.getProperty("user.dir"))) }
-        var refreshKey by remember { mutableStateOf(0) }
-        val files = remember(currentDir, refreshKey) {
-            currentDir.listFiles()?.toList()?.sortedWith(compareBy({ !it.isDirectory }, { it.name })) ?: emptyList()
+        var files by remember(currentDir) {
+            mutableStateOf(currentDir.listFiles()?.toList()?.sortedWith(compareBy({ !it.isDirectory }, { it.name })) ?: emptyList())
         }
-        var selectedIndex by remember(currentDir, refreshKey) { mutableStateOf(0) }
-        var editingIndex by remember(currentDir, refreshKey) { mutableStateOf<Int?>(null) }
+        var selectedIndex by remember(currentDir) { mutableStateOf(0) }
+        var editingIndex by remember(currentDir) { mutableStateOf<Int?>(null) }
         var editingText by remember { mutableStateOf(TextFieldValue("")) }
         val listState = rememberLazyListState()
         val focusRequester = remember { FocusRequester() }
@@ -188,8 +187,11 @@ fun App() {
                                                 if (newName.isNotBlank() && newName != file.name) {
                                                     val newFile = File(currentDir, newName)
                                                     if (!newFile.exists()) {
-                                                        file.renameTo(newFile)
-                                                        refreshKey++
+                                                        if (file.renameTo(newFile)) {
+                                                            files = files.toMutableList().also {
+                                                                it[index] = newFile
+                                                            }
+                                                        }
                                                     }
                                                 }
                                                 editingIndex = null

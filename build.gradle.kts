@@ -1,4 +1,5 @@
 plugins {
+  alias(libs.plugins.detekt)
   alias(libs.plugins.spotless)
   // this is necessary to avoid the plugins to be loaded multiple times
   // in each subproject's classloader

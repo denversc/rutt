@@ -5,6 +5,17 @@ plugins {
   alias(libs.plugins.composeMultiplatform)
   alias(libs.plugins.composeCompiler)
   alias(libs.plugins.composeHotReload)
+  alias(libs.plugins.detekt)
+}
+
+dependencies {
+  detektPlugins(libs.detekt.compose)
+}
+
+detekt {
+  buildUponDefaultConfig = true
+  config.setFrom(file("$rootDir/detekt.yml"))
+  source.setFrom("src")
 }
 
 kotlin {

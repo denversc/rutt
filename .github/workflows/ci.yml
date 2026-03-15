@@ -39,6 +39,34 @@ jobs:
       - uses: gradle/actions/setup-gradle@v3
       - run: ./gradlew spotlessCheck
 
+  compile:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '22'
+          distribution: 'temurin'
+      - uses: gradle/actions/setup-gradle@v3
+      - run: ./gradlew assemble
+
+  test:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: false
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '22'
+          distribution: 'temurin'
+      - uses: gradle/actions/setup-gradle@v3
+      - run: ./gradlew jvmTest
+
   actionlint:
     continue-on-error: false
     runs-on: ubuntu-latest

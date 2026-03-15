@@ -28,6 +28,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.io.File
@@ -148,6 +149,14 @@ fun App() {
                                         editingText = TextFieldValue(name, TextRange(name.length))
                                     }
                                     true
+                                }
+                                Key.R -> {
+                                    if (event.isShiftPressed) {
+                                        files = currentDir.listFiles()?.toList()?.sortedWith(compareBy({ !it.isDirectory }, { it.name })) ?: emptyList()
+                                        true
+                                    } else {
+                                        false
+                                    }
                                 }
                                 else -> false
                             }

@@ -135,10 +135,28 @@ fun App() {
                                     true
                                 }
                                 Key.H -> {
-                                    currentDir.parentFile?.let {
-                                        currentDir = it
+                                    if (event.isShiftPressed) {
+                                        val visibleItems = listState.layoutInfo.visibleItemsInfo
+                                        if (visibleItems.isNotEmpty()) {
+                                            selectedIndex = visibleItems.first().index
+                                        }
+                                    } else {
+                                        currentDir.parentFile?.let {
+                                            currentDir = it
+                                        }
                                     }
                                     true
+                                }
+                                Key.M -> {
+                                    if (event.isShiftPressed) {
+                                        val visibleItems = listState.layoutInfo.visibleItemsInfo
+                                        if (visibleItems.isNotEmpty()) {
+                                            selectedIndex = visibleItems[visibleItems.size / 2].index
+                                        }
+                                        true
+                                    } else {
+                                        false
+                                    }
                                 }
                                 Key.G -> {
                                     if (files.isNotEmpty()) {
@@ -153,8 +171,15 @@ fun App() {
                                     }
                                 }
                                 Key.L -> {
-                                    if (files.isNotEmpty() && files[selectedIndex].isDirectory) {
-                                        currentDir = files[selectedIndex]
+                                    if (event.isShiftPressed) {
+                                        val visibleItems = listState.layoutInfo.visibleItemsInfo
+                                        if (visibleItems.isNotEmpty()) {
+                                            selectedIndex = visibleItems.last().index
+                                        }
+                                    } else {
+                                        if (files.isNotEmpty() && files[selectedIndex].isDirectory) {
+                                            currentDir = files[selectedIndex]
+                                        }
                                     }
                                     true
                                 }

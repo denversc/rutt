@@ -2,6 +2,9 @@ name: CI
 
 on:
   pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 11 * * *' # Run nightly at 11am UTC (3am Pacific, 6am Eastern)
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

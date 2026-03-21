@@ -1,0 +1,5 @@
+# Enforce Unix line endings for all files
+* text eol=lf
+
+# Enforce Windows CRLF line endings for batch files
+*.bat text eol=crlf

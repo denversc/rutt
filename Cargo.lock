@@ -3,5 +3,13 @@
 version = 4
 
 [[package]]
-name = "rutt"
-version = "0.0.1"
+name = "rutt-core"
+version = "0.1.0"
+
+[[package]]
+name = "rutt-gui"
+version = "0.1.0"
+
+[[package]]
+name = "rutt-tui"
+version = "0.1.0"

@@ -1,0 +1,11 @@
+[package]
+name = "rutt-tui"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+rutt-core.workspace = true
+ratatui.workspace = true
+crossterm.workspace = true
+tokio.workspace = true
+anyhow.workspace = true

@@ -1,0 +1,64 @@
+import { ListView, VerticalBox } from "std-widgets.slint";
+
+export struct UiFileItem {
+    name: string,
+    is_dir: bool,
+    size: string,
+}
+
+export component AppWindow inherits Window {
+    title: "Rutt GUI - File Explorer (Vim-like)";
+    width: 600px;
+    height: 400px;
+    
+    in property <[UiFileItem]> items: [];
+    in property <int> selected_index: 0;
+    
+    callback key_pressed(string);
+    
+    forward-focus: key-handler;
+
+    key-handler := FocusScope {
+        key-pressed(event) => {
+            root.key_pressed(event.text);
+            accept
+        }
+        
+        VerticalBox {
+            Text {
+                text: "Current Directory: /mock/path";
+                font-size: 16px;
+                font-weight: 700;
+            }
+            
+            ListView {
+                for item[i] in root.items : Rectangle {
+                    height: 30px;
+                    background: i == root.selected_index ? #3a3a3a : transparent;
+                    
+                    HorizontalLayout {
+                        padding-left: 10px;
+                        spacing: 10px;
+                        alignment: start;
+                        
+                        Text {
+                            text: item.is-dir ? "📁" : "📄";
+                            vertical-alignment: center;
+                        }
+                        Text {
+                            text: item.name;
+                            vertical-alignment: center;
+                            color: i == root.selected_index ? white : #cccccc;
+                        }
+                    }
+                }
+            }
+            
+            Text {
+                text: "Status: Ready | 'q' to quit | 'j/k' to move";
+                font-size: 12px;
+                color: #888888;
+            }
+        }
+    }
+}

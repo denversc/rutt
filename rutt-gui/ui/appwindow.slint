@@ -8,8 +8,8 @@ export struct UiFileItem {
 
 export component AppWindow inherits Window {
     title: "Rutt GUI - File Explorer (Vim-like)";
-    width: 600px;
-    height: 400px;
+    preferred-width: 600px;
+    preferred-height: 400px;
     
     in property <[UiFileItem]> items: [];
     in property <int> selected_index: 0;
@@ -57,12 +57,14 @@ export component AppWindow inherits Window {
                             Text {
                                 text: item.is-dir ? "📁" : "📄";
                                 vertical-alignment: center;
+                                font-size: 14px;
                             }
                             Text {
                                 text: item.name;
                                 vertical-alignment: center;
                                 color: i == root.selected_index ? #ffffff : #1d1d1f;
                                 font-weight: i == root.selected_index ? 700 : 400;
+                                font-size: 14px;
                             }
                         }
                     }

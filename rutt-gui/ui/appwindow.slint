@@ -24,40 +24,48 @@ export component AppWindow inherits Window {
             accept
         }
         
-        VerticalBox {
-            Text {
-                text: "Current Directory: /mock/path";
-                font-size: 16px;
-                font-weight: 700;
-            }
+        Rectangle {
+            background: #f5f5f7;
             
-            ListView {
-                for item[i] in root.items : Rectangle {
-                    height: 30px;
-                    background: i == root.selected_index ? #3a3a3a : transparent;
-                    
-                    HorizontalLayout {
-                        padding-left: 10px;
-                        spacing: 10px;
-                        alignment: start;
+            VerticalBox {
+                padding: 10px;
+                
+                Text {
+                    text: "Current Directory: /mock/path";
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: #1d1d1f;
+                }
+                
+                ListView {
+                    for item[i] in root.items : Rectangle {
+                        height: 30px;
+                        background: i == root.selected_index ? #007aff : (Math.mod(i, 2) == 0 ? #ffffff : #f5f5f7);
                         
-                        Text {
-                            text: item.is-dir ? "📁" : "📄";
-                            vertical-alignment: center;
-                        }
-                        Text {
-                            text: item.name;
-                            vertical-alignment: center;
-                            color: i == root.selected_index ? white : #cccccc;
+                        HorizontalLayout {
+                            padding-left: 10px;
+                            spacing: 10px;
+                            alignment: start;
+                            
+                            Text {
+                                text: item.is-dir ? "📁" : "📄";
+                                vertical-alignment: center;
+                            }
+                            Text {
+                                text: item.name;
+                                vertical-alignment: center;
+                                color: i == root.selected_index ? #ffffff : #1d1d1f;
+                                font-weight: i == root.selected_index ? 700 : 400;
+                            }
                         }
                     }
                 }
-            }
-            
-            Text {
-                text: "Status: Ready | 'q' to quit | 'j/k' to move";
-                font-size: 12px;
-                color: #888888;
+                
+                Text {
+                    text: "Status: Ready | 'q' to quit | 'j/k' to move";
+                    font-size: 12px;
+                    color: #86868b;
+                }
             }
         }
     }

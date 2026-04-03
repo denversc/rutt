@@ -13,12 +13,7 @@ async fn main() -> Result<()> {
     // Initial Mock State
     let state = Rc::new(RefCell::new(State::DirectoryLoaded {
         path: "/mock/path".to_string(),
-        items: vec![
-            FileItem { name: "Documents".to_string(), is_dir: true, size: 0 },
-            FileItem { name: "Downloads".to_string(), is_dir: true, size: 0 },
-            FileItem { name: "config.toml".to_string(), is_dir: false, size: 1024 },
-            FileItem { name: "notes.txt".to_string(), is_dir: false, size: 512 },
-        ],
+        items: rutt_core::get_mock_items(),
         selected_index: 0,
     }));
 

@@ -14,7 +14,7 @@ use ratatui::{
 };
 use std::io;
 
-use rutt_core::{Action, FileItem, State};
+use rutt_core::{Action, State};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -30,6 +30,7 @@ async fn main() -> Result<()> {
         path: "/mock/path".to_string(),
         items: rutt_core::get_mock_items(),
         selected_index: 0,
+        scroll_offset: 0,
     };
 
     // Run the app loop
@@ -52,7 +53,11 @@ async fn run_app<B: ratatui::backend::Backend>(
     state: &mut State,
 ) -> Result<()> {
     loop {
-        terminal.draw(|f| ui(f, state))?;
+        let mut visible_height = 0;
+        terminal.draw(|f| {
+            visible_height = (f.area().height as usize).saturating_sub(6 + 2); // 3 (header) + 3 (footer) + 2 (borders)
+            ui(f, state);
+        })?;
 
         if event::poll(std::time::Duration::from_millis(16))? {
             if let Event::Key(key) = event::read()? {
@@ -70,7 +75,7 @@ async fn run_app<B: ratatui::backend::Backend>(
                         if action == Action::Quit {
                             return Ok(());
                         }
-                        handle_action(state, action);
+                        handle_action(state, action, visible_height);
                     }
                 }
             }
@@ -78,17 +83,23 @@ async fn run_app<B: ratatui::backend::Backend>(
     }
 }
 
-fn handle_action(state: &mut State, action: Action) {
-    if let State::DirectoryLoaded { items, selected_index, .. } = state {
+fn handle_action(state: &mut State, action: Action, visible_height: usize) {
+    if let State::DirectoryLoaded { items, selected_index, scroll_offset, .. } = state {
         match action {
             Action::MoveUp => {
                 if *selected_index > 0 {
                     *selected_index -= 1;
+                    if *selected_index < *scroll_offset {
+                        *scroll_offset = *selected_index;
+                    }
                 }
             }
             Action::MoveDown => {
                 if *selected_index < items.len() - 1 {
                     *selected_index += 1;
+                    if *selected_index >= *scroll_offset + visible_height {
+                        *scroll_offset = (*selected_index + 1).saturating_sub(visible_height);
+                    }
                 }
             }
             _ => {} // Handle others later
@@ -119,10 +130,12 @@ fn ui(f: &mut Frame, state: &State) {
     f.render_widget(title, chunks[0]);
 
     match state {
-        State::DirectoryLoaded { items, selected_index, .. } => {
+        State::DirectoryLoaded { items, selected_index, scroll_offset, .. } => {
             let list_items: Vec<Line> = items
                 .iter()
                 .enumerate()
+                .skip(*scroll_offset)
+                .take((chunks[1].height as usize).saturating_sub(2)) // visible height within borders
                 .map(|(i, item)| {
                     let is_selected = i == *selected_index;
                     let prefix = if is_selected { "> " } else { "  " };

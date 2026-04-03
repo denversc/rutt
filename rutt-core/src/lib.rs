@@ -17,6 +17,7 @@ pub enum State {
         path: String,
         items: Vec<FileItem>,
         selected_index: usize,
+        scroll_offset: usize,
     },
     Error(String),
 }

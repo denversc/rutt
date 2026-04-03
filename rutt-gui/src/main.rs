@@ -27,8 +27,8 @@ async fn main() -> Result<()> {
         let app = app_weak.unwrap();
         let action = match key_text.as_str() {
             "q" => Some(Action::Quit),
-            "k" | "\u{f700}" => Some(Action::MoveUp),     // Up Arrow
-            "j" | "\u{f701}" => Some(Action::MoveDown),   // Down Arrow
+            "k" | "\u{f700}" => Some(Action::MoveUp), // Up Arrow
+            "j" | "\u{f701}" => Some(Action::MoveDown), // Down Arrow
             "\n" | "l" | "\u{f703}" => Some(Action::Enter), // Right Arrow
             "\x08" | "h" | "\u{f702}" => Some(Action::Back), // Left Arrow
             _ => None,
@@ -53,7 +53,13 @@ async fn main() -> Result<()> {
 }
 
 fn handle_action(state: &mut State, action: Action, visible_height: usize) {
-    if let State::DirectoryLoaded { items, selected_index, scroll_offset, .. } = state {
+    if let State::DirectoryLoaded {
+        items,
+        selected_index,
+        scroll_offset,
+        ..
+    } = state
+    {
         match action {
             Action::MoveUp => {
                 if *selected_index > 0 {
@@ -77,7 +83,13 @@ fn handle_action(state: &mut State, action: Action, visible_height: usize) {
 }
 
 fn update_ui_from_state(app: &AppWindow, state: &State, update_items: bool) {
-    if let State::DirectoryLoaded { items, selected_index, scroll_offset, .. } = state {
+    if let State::DirectoryLoaded {
+        items,
+        selected_index,
+        scroll_offset,
+        ..
+    } = state
+    {
         if update_items {
             let ui_items: Vec<UiFileItem> = items
                 .iter()

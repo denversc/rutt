@@ -2,15 +2,15 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
+    Frame, Terminal,
     backend::CrosstermBackend,
     layout::{Alignment, Constraint, Layout},
-    widgets::{Block, Borders, Paragraph},
     style::{Color, Style, Stylize},
     text::{Line, Span},
-    Frame, Terminal,
+    widgets::{Block, Borders, Paragraph},
 };
 use std::io;
 
@@ -67,7 +67,9 @@ async fn run_app<B: ratatui::backend::Backend>(
                         KeyCode::Char('k') | KeyCode::Up => Some(Action::MoveUp),
                         KeyCode::Char('j') | KeyCode::Down => Some(Action::MoveDown),
                         KeyCode::Enter | KeyCode::Char('l') | KeyCode::Right => Some(Action::Enter),
-                        KeyCode::Backspace | KeyCode::Char('h') | KeyCode::Left => Some(Action::Back),
+                        KeyCode::Backspace | KeyCode::Char('h') | KeyCode::Left => {
+                            Some(Action::Back)
+                        }
                         _ => None,
                     };
 
@@ -84,7 +86,13 @@ async fn run_app<B: ratatui::backend::Backend>(
 }
 
 fn handle_action(state: &mut State, action: Action, visible_height: usize) {
-    if let State::DirectoryLoaded { items, selected_index, scroll_offset, .. } = state {
+    if let State::DirectoryLoaded {
+        items,
+        selected_index,
+        scroll_offset,
+        ..
+    } = state
+    {
         match action {
             Action::MoveUp => {
                 if *selected_index > 0 {
@@ -124,13 +132,27 @@ fn ui(f: &mut Frame, state: &State) {
 
     let title = Paragraph::new(title_text)
         .alignment(Alignment::Center)
-        .style(Style::default().bg(Color::Rgb(24, 24, 37)).fg(Color::Rgb(203, 166, 247)).bold()) // Mantle bg, Mauve fg
-        .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(69, 71, 90)))); // Surface1 border
+        .style(
+            Style::default()
+                .bg(Color::Rgb(24, 24, 37))
+                .fg(Color::Rgb(203, 166, 247))
+                .bold(),
+        ) // Mantle bg, Mauve fg
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .border_style(Style::default().fg(Color::Rgb(69, 71, 90))),
+        ); // Surface1 border
 
     f.render_widget(title, chunks[0]);
 
     match state {
-        State::DirectoryLoaded { items, selected_index, scroll_offset, .. } => {
+        State::DirectoryLoaded {
+            items,
+            selected_index,
+            scroll_offset,
+            ..
+        } => {
             let list_items: Vec<Line> = items
                 .iter()
                 .enumerate()
@@ -140,54 +162,73 @@ fn ui(f: &mut Frame, state: &State) {
                     let is_selected = i == *selected_index;
                     let prefix = if is_selected { "> " } else { "  " };
                     let icon = if item.is_dir { "📁 " } else { "📄 " };
-                    
+
                     let mut spans = vec![
                         Span::from(prefix).fg(Color::Rgb(245, 194, 231)).bold(), // Pink
                         Span::from(icon),
                     ];
-                    
+
                     let item_style = if item.is_dir {
                         Style::default().fg(Color::Rgb(137, 180, 250)) // Blue
                     } else {
                         Style::default().fg(Color::Rgb(205, 214, 244)) // Text
                     };
-                    
+
                     let item_style = if is_selected {
                         item_style.bg(Color::Rgb(49, 50, 68)).bold() // Surface0 bg
                     } else {
                         item_style
                     };
-                    
+
                     spans.push(Span::from(item.name.clone()).style(item_style));
-                    
+
                     Line::from(spans)
                 })
                 .collect();
 
-            let content = Paragraph::new(list_items)
-                .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(69, 71, 90)))); // Surface1 border
+            let content = Paragraph::new(list_items).block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .border_style(Style::default().fg(Color::Rgb(69, 71, 90))),
+            ); // Surface1 border
             f.render_widget(content, chunks[1]);
         }
         State::Loading => {
             let content = Paragraph::new("Loading...")
                 .alignment(Alignment::Center)
                 .style(Style::default().fg(Color::Rgb(205, 214, 244))) // Text
-                .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(69, 71, 90)))); // Surface1 border
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .border_style(Style::default().fg(Color::Rgb(69, 71, 90))),
+                ); // Surface1 border
             f.render_widget(content, chunks[1]);
         }
         State::Error(err) => {
             let content = Paragraph::new(format!("Error: {err}"))
                 .alignment(Alignment::Center)
                 .style(Style::default().fg(Color::Rgb(243, 139, 168))) // Red
-                .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(69, 71, 90)))); // Surface1 border
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .border_style(Style::default().fg(Color::Rgb(69, 71, 90))),
+                ); // Surface1 border
             f.render_widget(content, chunks[1]);
         }
     }
 
     let footer = Paragraph::new(" Status: Ready | 'q' to quit | 'j/k' to move ")
         .alignment(Alignment::Left)
-        .style(Style::default().bg(Color::Rgb(24, 24, 37)).fg(Color::Rgb(108, 112, 134))) // Mantle bg, Overlay0 fg
-        .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(69, 71, 90)))); // Surface1 border
+        .style(
+            Style::default()
+                .bg(Color::Rgb(24, 24, 37))
+                .fg(Color::Rgb(108, 112, 134)),
+        ) // Mantle bg, Overlay0 fg
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .border_style(Style::default().fg(Color::Rgb(69, 71, 90))),
+        ); // Surface1 border
 
     f.render_widget(footer, chunks[2]);
 }

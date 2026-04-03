@@ -8,6 +8,8 @@ use ratatui::{
     backend::CrosstermBackend,
     layout::{Alignment, Constraint, Layout},
     widgets::{Block, Borders, Paragraph},
+    style::{Color, Style, Stylize},
+    text::{Line, Span},
     Frame, Terminal,
 };
 use std::io;
@@ -26,12 +28,7 @@ async fn main() -> Result<()> {
     // Initial Mock State
     let mut state = State::DirectoryLoaded {
         path: "/mock/path".to_string(),
-        items: vec![
-            FileItem { name: "Documents".to_string(), is_dir: true, size: 0 },
-            FileItem { name: "Downloads".to_string(), is_dir: true, size: 0 },
-            FileItem { name: "config.toml".to_string(), is_dir: false, size: 1024 },
-            FileItem { name: "notes.txt".to_string(), is_dir: false, size: 512 },
-        ],
+        items: rutt_core::get_mock_items(),
         selected_index: 0,
     };
 
@@ -110,49 +107,74 @@ fn ui(f: &mut Frame, state: &State) {
         .split(f.area());
 
     let title_text = match state {
-        State::DirectoryLoaded { path, .. } => format!("Rutt TUI - {path}"),
-        _ => "Rutt TUI".to_string(),
+        State::DirectoryLoaded { path, .. } => format!(" Rutt TUI - {path} "),
+        _ => " Rutt TUI ".to_string(),
     };
 
     let title = Paragraph::new(title_text)
         .alignment(Alignment::Center)
-        .block(Block::default().borders(Borders::ALL));
+        .style(Style::default().bg(Color::Rgb(24, 24, 37)).fg(Color::Rgb(203, 166, 247)).bold()) // Mantle bg, Mauve fg
+        .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(69, 71, 90)))); // Surface1 border
 
     f.render_widget(title, chunks[0]);
 
     match state {
         State::DirectoryLoaded { items, selected_index, .. } => {
-            let list_items: Vec<String> = items
+            let list_items: Vec<Line> = items
                 .iter()
                 .enumerate()
                 .map(|(i, item)| {
-                    let prefix = if i == *selected_index { "> " } else { "  " };
-                    let icon = if item.is_dir { "📁" } else { "📄" };
-                    format!("{}{} {}", prefix, icon, item.name)
+                    let is_selected = i == *selected_index;
+                    let prefix = if is_selected { "> " } else { "  " };
+                    let icon = if item.is_dir { "📁 " } else { "📄 " };
+                    
+                    let mut spans = vec![
+                        Span::from(prefix).fg(Color::Rgb(245, 194, 231)).bold(), // Pink
+                        Span::from(icon),
+                    ];
+                    
+                    let item_style = if item.is_dir {
+                        Style::default().fg(Color::Rgb(137, 180, 250)) // Blue
+                    } else {
+                        Style::default().fg(Color::Rgb(205, 214, 244)) // Text
+                    };
+                    
+                    let item_style = if is_selected {
+                        item_style.bg(Color::Rgb(49, 50, 68)).bold() // Surface0 bg
+                    } else {
+                        item_style
+                    };
+                    
+                    spans.push(Span::from(item.name.clone()).style(item_style));
+                    
+                    Line::from(spans)
                 })
                 .collect();
 
-            let content = Paragraph::new(list_items.join("\n"))
-                .block(Block::default().borders(Borders::ALL));
+            let content = Paragraph::new(list_items)
+                .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(69, 71, 90)))); // Surface1 border
             f.render_widget(content, chunks[1]);
         }
         State::Loading => {
             let content = Paragraph::new("Loading...")
                 .alignment(Alignment::Center)
-                .block(Block::default().borders(Borders::ALL));
+                .style(Style::default().fg(Color::Rgb(205, 214, 244))) // Text
+                .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(69, 71, 90)))); // Surface1 border
             f.render_widget(content, chunks[1]);
         }
         State::Error(err) => {
             let content = Paragraph::new(format!("Error: {err}"))
                 .alignment(Alignment::Center)
-                .block(Block::default().borders(Borders::ALL));
+                .style(Style::default().fg(Color::Rgb(243, 139, 168))) // Red
+                .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(69, 71, 90)))); // Surface1 border
             f.render_widget(content, chunks[1]);
         }
     }
 
-    let footer = Paragraph::new("Status: Ready | 'q' to quit | 'j/k' to move")
+    let footer = Paragraph::new(" Status: Ready | 'q' to quit | 'j/k' to move ")
         .alignment(Alignment::Left)
-        .block(Block::default().borders(Borders::ALL));
+        .style(Style::default().bg(Color::Rgb(24, 24, 37)).fg(Color::Rgb(108, 112, 134))) // Mantle bg, Overlay0 fg
+        .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(69, 71, 90)))); // Surface1 border
 
     f.render_widget(footer, chunks[2]);
 }

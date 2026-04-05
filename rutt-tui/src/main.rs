@@ -16,6 +16,8 @@ use std::io;
 
 use rutt_core::{Action, State};
 
+const UI_CHROME_HEIGHT: usize = 8; // 3 (header) + 3 (footer) + 2 (borders)
+
 #[tokio::main]
 async fn main() -> Result<()> {
     // Setup terminal
@@ -55,7 +57,9 @@ async fn run_app<B: ratatui::backend::Backend>(
     loop {
         let mut visible_height = 0;
         terminal.draw(|f| {
-            visible_height = (f.area().height as usize).saturating_sub(6 + 2); // 3 (header) + 3 (footer) + 2 (borders)
+            visible_height = (f.area().height as usize)
+                .saturating_sub(UI_CHROME_HEIGHT)
+                .max(1);
             ui(f, state);
         })?;
 

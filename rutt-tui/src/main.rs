@@ -81,40 +81,10 @@ async fn run_app<B: ratatui::backend::Backend>(
                         if action == Action::Quit {
                             return Ok(());
                         }
-                        handle_action(state, action, visible_height);
+                        state.handle_action(action, visible_height);
                     }
                 }
             }
-        }
-    }
-}
-
-fn handle_action(state: &mut State, action: Action, visible_height: usize) {
-    if let State::DirectoryLoaded {
-        items,
-        selected_index,
-        scroll_offset,
-        ..
-    } = state
-    {
-        match action {
-            Action::MoveUp => {
-                if *selected_index > 0 {
-                    *selected_index -= 1;
-                    if *selected_index < *scroll_offset {
-                        *scroll_offset = *selected_index;
-                    }
-                }
-            }
-            Action::MoveDown => {
-                if *selected_index < items.len() - 1 {
-                    *selected_index += 1;
-                    if *selected_index >= *scroll_offset + visible_height {
-                        *scroll_offset = (*selected_index + 1).saturating_sub(visible_height);
-                    }
-                }
-            }
-            _ => {} // Handle others later
         }
     }
 }

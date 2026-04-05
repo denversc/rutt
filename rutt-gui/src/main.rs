@@ -42,7 +42,7 @@ async fn main() -> Result<()> {
 
             let mut state_ref = state_clone.borrow_mut();
             let visible_count = (app.get_visible_count() as usize).max(1);
-            handle_action(&mut state_ref, action, visible_count);
+            state_ref.handle_action(action, visible_count);
             update_ui_from_state(&app, &state_ref, false);
         }
     });
@@ -50,36 +50,6 @@ async fn main() -> Result<()> {
     app.run()?;
 
     Ok(())
-}
-
-fn handle_action(state: &mut State, action: Action, visible_height: usize) {
-    if let State::DirectoryLoaded {
-        items,
-        selected_index,
-        scroll_offset,
-        ..
-    } = state
-    {
-        match action {
-            Action::MoveUp => {
-                if *selected_index > 0 {
-                    *selected_index -= 1;
-                    if *selected_index < *scroll_offset {
-                        *scroll_offset = *selected_index;
-                    }
-                }
-            }
-            Action::MoveDown => {
-                if *selected_index < items.len() - 1 {
-                    *selected_index += 1;
-                    if *selected_index >= *scroll_offset + visible_height {
-                        *scroll_offset = (*selected_index + 1).saturating_sub(visible_height);
-                    }
-                }
-            }
-            _ => {} // Handle others later
-        }
-    }
 }
 
 fn update_ui_from_state(app: &AppWindow, state: &State, update_items: bool) {

@@ -22,6 +22,38 @@ pub enum State {
     Error(String),
 }
 
+impl State {
+    pub fn handle_action(&mut self, action: Action, visible_height: usize) {
+        if let State::DirectoryLoaded {
+            items,
+            selected_index,
+            scroll_offset,
+            ..
+        } = self
+        {
+            match action {
+                Action::MoveUp => {
+                    if *selected_index > 0 {
+                        *selected_index -= 1;
+                        if *selected_index < *scroll_offset {
+                            *scroll_offset = *selected_index;
+                        }
+                    }
+                }
+                Action::MoveDown => {
+                    if *selected_index < items.len() - 1 {
+                        *selected_index += 1;
+                        if *selected_index >= *scroll_offset + visible_height {
+                            *scroll_offset = (*selected_index + 1).saturating_sub(visible_height);
+                        }
+                    }
+                }
+                _ => {} // Handle others later
+            }
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct FileItem {
     pub name: String,

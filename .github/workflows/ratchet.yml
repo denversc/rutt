@@ -7,8 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
+        with:
+          show-progress: false
+          sparse-checkout: '.github/'
 
       - name: Ratchet Lint
         uses: sethvargo/ratchet@27f7515b4648e179168f8f8ae2257636fdb03c48 # ratchet:sethvargo/ratchet@main
         with:
-          args: lint .github/workflows
+          args: lint .github/workflows/*.yml

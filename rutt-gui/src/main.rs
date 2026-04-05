@@ -42,8 +42,11 @@ async fn main() -> Result<()> {
 
             let mut state_ref = state_clone.borrow_mut();
             let visible_count = (app.get_visible_count() as usize).max(1);
-            state_ref.handle_action(action, visible_count);
-            update_ui_from_state(&app, &state_ref, false);
+            let change_event = state_ref.handle_action(action, visible_count);
+            let update_items = matches!(change_event, rutt_core::StateChange::DirectoryChanged);
+            if change_event != rutt_core::StateChange::NoChange {
+                update_ui_from_state(&app, &state_ref, update_items);
+            }
         }
     });
 

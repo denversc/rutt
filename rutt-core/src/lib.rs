@@ -22,8 +22,15 @@ pub enum State {
     Error(String),
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StateChange {
+    CursorMoved,
+    DirectoryChanged,
+    NoChange,
+}
+
 impl State {
-    pub fn handle_action(&mut self, action: Action, visible_height: usize) {
+    pub fn handle_action(&mut self, action: Action, visible_height: usize) -> StateChange {
         if let State::DirectoryLoaded {
             items,
             selected_index,
@@ -38,6 +45,7 @@ impl State {
                         if *selected_index < *scroll_offset {
                             *scroll_offset = *selected_index;
                         }
+                        return StateChange::CursorMoved;
                     }
                 }
                 Action::MoveDown => {
@@ -46,11 +54,13 @@ impl State {
                         if *selected_index >= *scroll_offset + visible_height {
                             *scroll_offset = (*selected_index + 1).saturating_sub(visible_height);
                         }
+                        return StateChange::CursorMoved;
                     }
                 }
                 _ => {} // Handle others later
             }
         }
+        StateChange::NoChange
     }
 }
 

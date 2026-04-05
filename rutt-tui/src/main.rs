@@ -63,9 +63,9 @@ async fn run_app<B: ratatui::backend::Backend>(
             ui(f, state);
         })?;
 
-        if event::poll(std::time::Duration::from_millis(16))?
-            && let Event::Key(key) = event::read()?
-                && key.kind == KeyEventKind::Press {
+        if event::poll(std::time::Duration::from_millis(16))? {
+            if let Event::Key(key) = event::read()? {
+                if key.kind == KeyEventKind::Press {
                     let action = match key.code {
                         KeyCode::Char('q') => Some(Action::Quit),
                         KeyCode::Char('k') | KeyCode::Up => Some(Action::MoveUp),
@@ -84,6 +84,8 @@ async fn run_app<B: ratatui::backend::Backend>(
                         state.handle_action(action, visible_height);
                     }
                 }
+            }
+        }
     }
 }
 

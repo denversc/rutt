@@ -1,3 +1,5 @@
+name: ratchet
+
 on:
   pull_request:
 

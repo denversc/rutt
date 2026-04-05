@@ -1,0 +1,91 @@
+import { ListView, VerticalBox } from "std-widgets.slint";
+
+export struct UiFileItem {
+    name: string,
+    is_dir: bool,
+    size: string,
+}
+
+export component AppWindow inherits Window {
+    title: "Rutt GUI - File Explorer (Vim-like)";
+    preferred-width: 600px;
+    preferred-height: 400px;
+
+    in property <[UiFileItem]> items: [];
+    in property <int> selected_index: 0;
+
+    property <length> item_height: 30px;
+    out property <int> visible_count: Math.floor(listview.height / item_height);
+
+    changed selected_index => {
+        let item_top = root.selected_index * root.item_height;
+        let item_bottom = item_top + root.item_height;
+        let view_top = -listview.viewport-y;
+        let view_bottom = view_top + listview.height;
+
+        if (item_top < view_top) {
+            listview.viewport-y = -item_top;
+        } else if (item_bottom > view_bottom) {
+            listview.viewport-y = -(item_bottom - listview.height);
+        }
+    }
+
+    callback key_pressed(string);
+
+
+    forward-focus: key-handler;
+
+    key-handler := FocusScope {
+        key-pressed(event) => {
+            root.key_pressed(event.text);
+            accept
+        }
+
+        Rectangle {
+            background: #f5f5f7;
+
+            VerticalBox {
+                padding: 10px;
+
+                Text {
+                    text: "Current Directory: /mock/path";
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: #1d1d1f;
+                }
+
+                listview := ListView {
+                    for item[i] in root.items : Rectangle {
+                        height: root.item_height;
+                        background: i == root.selected_index ? #007aff : (Math.mod(i, 2) == 0 ? #ffffff : #f5f5f7);
+
+                        HorizontalLayout {
+                            padding-left: 10px;
+                            spacing: 10px;
+                            alignment: start;
+
+                            Text {
+                                text: item.is-dir ? "📁" : "📄";
+                                vertical-alignment: center;
+                                font-size: 14px;
+                            }
+                            Text {
+                                text: item.name;
+                                vertical-alignment: center;
+                                color: i == root.selected_index ? #ffffff : #1d1d1f;
+                                font-weight: i == root.selected_index ? 700 : 400;
+                                font-size: 14px;
+                            }
+                        }
+                    }
+                }
+
+                Text {
+                    text: "Status: Ready | 'q' to quit | 'j/k' to move";
+                    font-size: 12px;
+                    color: #86868b;
+                }
+            }
+        }
+    }
+}

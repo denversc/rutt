@@ -1,0 +1,13 @@
+[package]
+name = "rutt-gui"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+rutt-core.workspace = true
+tokio.workspace = true
+anyhow.workspace = true
+slint.workspace = true
+
+[build-dependencies]
+slint-build.workspace = true

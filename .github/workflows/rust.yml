@@ -23,6 +23,9 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # ratchet:dtolnay/rust-toolchain@stable
 
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@eb7b1617732b74e56388d030076c114030ff4639 # ratchet:Swatinem/rust-cache@v2
+
       - name: cargo build
         run: cargo build --workspace --verbose
 
@@ -35,6 +38,9 @@ jobs:
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # ratchet:dtolnay/rust-toolchain@stable
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@eb7b1617732b74e56388d030076c114030ff4639 # ratchet:Swatinem/rust-cache@v2
 
       - name: cargo test
         run: cargo test --workspace --verbose
@@ -50,6 +56,9 @@ jobs:
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # ratchet:dtolnay/rust-toolchain@stable
         with:
           components: clippy
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@eb7b1617732b74e56388d030076c114030ff4639 # ratchet:Swatinem/rust-cache@v2
 
       - name: cargo clippy
         run: cargo clippy --workspace --all-targets --all-features -- -D warnings

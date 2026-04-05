@@ -10,19 +10,21 @@ export component AppWindow inherits Window {
     title: "Rutt GUI - File Explorer (Vim-like)";
     preferred-width: 600px;
     preferred-height: 400px;
-    
+
     in property <[UiFileItem]> items: [];
     in property <int> selected_index: 0;
     in property <int> scroll_offset: 0;
-    out property <int> visible_count: Math.floor(listview.height / 30px);
-    
+
+    property <length> item_height: 30px;
+    out property <int> visible_count: Math.floor(listview.height / item_height);
+
     changed scroll_offset => {
-        listview.viewport-y = -root.scroll_offset * 30px;
+        listview.viewport-y = -root.scroll_offset * item_height;
     }
-    
+
     callback key_pressed(string);
 
-    
+
     forward-focus: key-handler;
 
     key-handler := FocusScope {
@@ -30,30 +32,30 @@ export component AppWindow inherits Window {
             root.key_pressed(event.text);
             accept
         }
-        
+
         Rectangle {
             background: #f5f5f7;
-            
+
             VerticalBox {
                 padding: 10px;
-                
+
                 Text {
                     text: "Current Directory: /mock/path";
                     font-size: 16px;
                     font-weight: 700;
                     color: #1d1d1f;
                 }
-                
+
                 listview := ListView {
                     for item[i] in root.items : Rectangle {
-                        height: 30px;
+                        height: root.item_height;
                         background: i == root.selected_index ? #007aff : (Math.mod(i, 2) == 0 ? #ffffff : #f5f5f7);
-                        
+
                         HorizontalLayout {
                             padding-left: 10px;
                             spacing: 10px;
                             alignment: start;
-                            
+
                             Text {
                                 text: item.is-dir ? "📁" : "📄";
                                 vertical-alignment: center;
@@ -69,7 +71,7 @@ export component AppWindow inherits Window {
                         }
                     }
                 }
-                
+
                 Text {
                     text: "Status: Ready | 'q' to quit | 'j/k' to move";
                     font-size: 12px;

@@ -3,6 +3,10 @@ name: rust
 on:
   workflow_dispatch:
   pull_request:
+    paths:
+      - '**'
+      - '!.github/**'
+      - '.github/workflows/rust.yml'
   schedule:
     - cron: '0 11 * * *' # Run nightly at 11am UTC (3am Pacific, 6am Eastern)
 

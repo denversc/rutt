@@ -13,13 +13,21 @@ export component AppWindow inherits Window {
 
     in property <[UiFileItem]> items: [];
     in property <int> selected_index: 0;
-    in property <int> scroll_offset: 0;
 
     property <length> item_height: 30px;
     out property <int> visible_count: Math.floor(listview.height / item_height);
 
-    changed scroll_offset => {
-        listview.viewport-y = -root.scroll_offset * item_height;
+    changed selected_index => {
+        let item_top = root.selected_index * root.item_height;
+        let item_bottom = item_top + root.item_height;
+        let view_top = -listview.viewport-y;
+        let view_bottom = view_top + listview.height;
+
+        if (item_top < view_top) {
+            listview.viewport-y = -item_top;
+        } else if (item_bottom > view_bottom) {
+            listview.viewport-y = -(item_bottom - listview.height);
+        }
     }
 
     callback key_pressed(string);

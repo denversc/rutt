@@ -59,7 +59,6 @@ fn update_ui_from_state(app: &AppWindow, state: &State, update_items: bool) {
     if let State::DirectoryLoaded {
         items,
         selected_index,
-        scroll_offset,
         ..
     } = state
     {
@@ -76,6 +75,5 @@ fn update_ui_from_state(app: &AppWindow, state: &State, update_items: bool) {
             app.set_items(ModelRc::from(model));
         }
         app.set_selected_index(*selected_index as i32);
-        app.set_scroll_offset(*scroll_offset as i32);
     }
 }

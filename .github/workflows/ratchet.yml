@@ -10,7 +10,7 @@ jobs:
           show-progress: false
           sparse-checkout: '.github/'
 
-      - name: Ratchet Lint
+      - name: ratchet
         uses: sethvargo/ratchet@27f7515b4648e179168f8f8ae2257636fdb03c48 # ratchet:sethvargo/ratchet@main
         with:
-          args: lint .github/workflows/*.yml
+          files: .github/workflows/*.yml

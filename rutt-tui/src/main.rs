@@ -63,27 +63,24 @@ async fn run_app<B: ratatui::backend::Backend>(
             ui(f, state);
         })?;
 
-        if event::poll(std::time::Duration::from_millis(16))? {
-            if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
-                    let action = match key.code {
-                        KeyCode::Char('q') => Some(Action::Quit),
-                        KeyCode::Char('k') | KeyCode::Up => Some(Action::MoveUp),
-                        KeyCode::Char('j') | KeyCode::Down => Some(Action::MoveDown),
-                        KeyCode::Enter | KeyCode::Char('l') | KeyCode::Right => Some(Action::Enter),
-                        KeyCode::Backspace | KeyCode::Char('h') | KeyCode::Left => {
-                            Some(Action::Back)
-                        }
-                        _ => None,
-                    };
+        if event::poll(std::time::Duration::from_millis(16))?
+            && let Event::Key(key) = event::read()?
+            && key.kind == KeyEventKind::Press
+        {
+            let action = match key.code {
+                KeyCode::Char('q') => Some(Action::Quit),
+                KeyCode::Char('k') | KeyCode::Up => Some(Action::MoveUp),
+                KeyCode::Char('j') | KeyCode::Down => Some(Action::MoveDown),
+                KeyCode::Enter | KeyCode::Char('l') | KeyCode::Right => Some(Action::Enter),
+                KeyCode::Backspace | KeyCode::Char('h') | KeyCode::Left => Some(Action::Back),
+                _ => None,
+            };
 
-                    if let Some(action) = action {
-                        if action == Action::Quit {
-                            return Ok(());
-                        }
-                        state.handle_action(action, visible_height);
-                    }
+            if let Some(action) = action {
+                if action == Action::Quit {
+                    return Ok(());
                 }
+                state.handle_action(action, visible_height);
             }
         }
     }

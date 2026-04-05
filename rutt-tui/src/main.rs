@@ -16,7 +16,10 @@ use std::io;
 
 use rutt_core::{Action, State};
 
-const UI_CHROME_HEIGHT: usize = 8; // 3 (header) + 3 (footer) + 2 (borders)
+const HEADER_HEIGHT: u16 = 3;
+const FOOTER_HEIGHT: u16 = 3;
+const CONTENT_BORDER_HEIGHT: u16 = 2;
+const UI_CHROME_HEIGHT: usize = (HEADER_HEIGHT + FOOTER_HEIGHT + CONTENT_BORDER_HEIGHT) as usize;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -90,9 +93,9 @@ fn ui(f: &mut Frame, state: &State) {
     let chunks = Layout::default()
         .direction(ratatui::layout::Direction::Vertical)
         .constraints([
-            Constraint::Length(3),
+            Constraint::Length(HEADER_HEIGHT),
             Constraint::Min(0),
-            Constraint::Length(3),
+            Constraint::Length(FOOTER_HEIGHT),
         ])
         .split(f.area());
 
@@ -128,7 +131,7 @@ fn ui(f: &mut Frame, state: &State) {
                 .iter()
                 .enumerate()
                 .skip(*scroll_offset)
-                .take((chunks[1].height as usize).saturating_sub(2)) // visible height within borders
+                .take((chunks[1].height as usize).saturating_sub(CONTENT_BORDER_HEIGHT as usize)) // visible height within borders
                 .map(|(i, item)| {
                     let is_selected = i == *selected_index;
                     let prefix = if is_selected { "> " } else { "  " };

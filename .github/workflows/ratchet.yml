@@ -1,10 +1,6 @@
-name: Ratchet
-
 on:
   push:
-    branches: ["main"]
   pull_request:
-    branches: ["main"]
 
 jobs:
   ratchet:
